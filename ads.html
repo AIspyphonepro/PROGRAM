@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>NOVA ADS · إدخال يومي</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: system-ui, sans-serif; }
+        body { background: #f0f4fa; padding: 16px; padding-bottom: 80px; }
+        .header { display: flex; align-items: center; gap: 12px; background: white; padding: 16px; border-radius: 30px; margin-bottom: 20px; }
+        .logo { width: 56px; height: 56px; background: #102a43; border-radius: 18px; overflow: hidden; }
+        .logo img { width: 100%; height: 100%; object-fit: cover; }
+        .title { font-size: 24px; font-weight: 700; color: #0b2a41; }
+        .sub { font-size: 14px; color: #5a7184; }
+        .card { background: white; border-radius: 36px; padding: 26px 20px; margin-bottom: 20px; }
+        .form-group { margin-bottom: 22px; }
+        label { display: block; font-size: 15px; font-weight: 600; color: #1f3a5f; margin-bottom: 8px; }
+        input { width: 100%; padding: 18px 22px; border: 2px solid #e6ecf5; border-radius: 40px; font-size: 16px; background: #fbfdff; }
+        input:focus { border-color: #3b82f6; outline: none; }
+        .expense-item {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        .expense-item input {
+            flex: 1;
+        }
+        .remove-expense {
+            background: #fee2e2;
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 30px;
+            color: #b91c1c;
+            font-size: 22px;
+            cursor: pointer;
+        }
+        .btn-add-expense {
+            background: #e6f0ff;
+            border: 2px dashed #3b82f6;
+            width: 100%;
+            padding: 18px;
+            border-radius: 40px;
+            color: #1e4a8b;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px 0;
+            cursor: pointer;
+        }
+        .profit-preview {
+            background: linear-gradient(145deg, #d9eaff, #c3dafe);
+            border-radius: 40px;
+            padding: 22px;
+            text-align: center;
+            margin: 20px 0;
+        }
+        .profit-preview .value { font-size: 40px; font-weight: 800; color: #0f2b63; }
+        .btn-primary {
+            background: #0f2b46; color: white; border: none; width: 100%; padding: 22px; border-radius: 60px;
+            font-size: 20px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 12px;
+            cursor: pointer; box-shadow: 0 12px 24px rgba(15,35,70,0.2);
+        }
+        .bottom-nav {
+            position: fixed; bottom: 0; left: 0; right: 0; background: white; display: flex;
+            justify-content: space-around; padding: 12px 16px 20px; border-radius: 40px 40px 0 0;
+            border-top: 1px solid #edf2f9;
+        }
+        .nav-item { display: flex; flex-direction: column; align-items: center; text-decoration: none; color: #7f8fa4; font-size: 12px; gap: 4px; }
+        .nav-item i { font-size: 24px; }
+        .nav-item.active { color: #1e4a8b; font-weight: 600; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo"><img src="img/logo.png" alt="NOVA"></div>
+        <div><div class="title">إدخال يومي</div><div class="sub">تسجيل المبيعات والمصاريف</div></div>
+    </div>
+
+    <div class="card">
+        <form id="dailyForm">
+            <div class="form-group">
+                <label><i class="far fa-calendar-alt"></i> التاريخ</label>
+                <input type="date" id="dateInput" required>
+            </div>
+            <div class="form-group">
+                <label><i class="fas fa-money-bill-wave"></i> إجمالي المبيعات (دج)</label>
+                <input type="number" id="totalSales" step="0.01" min="0" required>
+            </div>
+            <div class="form-group">
+                <label><i class="fas fa-dollar-sign"></i> سعر الدولار اليوم</label>
+                <input type="number" id="dollarRate" step="0.1" min="0" value="260" required>
+            </div>
+
+            <!-- بنود المصاريف المتعددة -->
+            <div id="expensesContainer">
+                <div class="expense-item">
+                    <input type="number" class="expense-usd" placeholder="مصاريف ($)" step="0.01" min="0">
+                    <button type="button" class="remove-expense" onclick="removeExpense(this)"><i class="fas fa-times"></i></button>
+                </div>
+            </div>
+            <button type="button" class="btn-add-expense" onclick="addExpense()"><i class="fas fa-plus-circle"></i> أضف بند مصاريف</button>
+
+            <div class="form-group">
+                <label><i class="fab fa-facebook"></i> مصاريف فيسبوك (دج)</label>
+                <input type="number" id="fbExpense" step="0.01" min="0" value="0">
+            </div>
+
+            <div class="profit-preview" id="profitPreview">
+                <div class="label"><i class="fas fa-chart-line"></i> صافي الربح المتوقع</div>
+                <div class="value" id="netPreview">0</div>
+                <div style="font-size:14px;">المبيعات - (إجمالي المصاريف$ × السعر) - فيسبوك</div>
+            </div>
+
+            <button type="submit" class="btn-primary"><i class="fas fa-save"></i> حفظ اليوم</button>
+        </form>
+    </div>
+
+    <div class="bottom-nav">
+        <a href="dashboard.html" class="nav-item"><i class="fas fa-chart-pie"></i><span>الرئيسية</span></a>
+        <a href="index.html" class="nav-item"><i class="fas fa-user-plus"></i><span>إضافة</span></a>
+        <a href="vu.html" class="nav-item"><i class="fas fa-users"></i><span>العملاء</span></a>
+        <a href="ads.html" class="nav-item active"><i class="fas fa-coins"></i><span>يومي</span></a>
+        <a href="total.html" class="nav-item"><i class="fas fa-calendar-alt"></i><span>ملخص</span></a>
+    </div>
+
+    <script>
+        const STORAGE_DAILY = 'nova_daily';
+        function getDaily() { return JSON.parse(localStorage.getItem(STORAGE_DAILY) || '[]'); }
+        function saveDaily(data) { localStorage.setItem(STORAGE_DAILY, JSON.stringify(data)); }
+
+        function formatNumber(value) {
+            if (value === null || value === undefined) return '0';
+            if (Number.isInteger(value)) return value.toString();
+            let num = value.toFixed(2);
+            return num.endsWith('.00') ? parseInt(value).toString() : num;
+        }
+
+        // إدارة بنود المصاريف
+        window.addExpense = function() {
+            const container = document.getElementById('expensesContainer');
+            const div = document.createElement('div');
+            div.className = 'expense-item';
+            div.innerHTML = `
+                <input type="number" class="expense-usd" placeholder="مصاريف ($)" step="0.01" min="0">
+                <button type="button" class="remove-expense" onclick="removeExpense(this)"><i class="fas fa-times"></i></button>
+            `;
+            container.appendChild(div);
+            attachExpenseListeners();
+            updateNetPreview();
+        };
+
+        window.removeExpense = function(btn) {
+            btn.closest('.expense-item').remove();
+            updateNetPreview();
+        };
+
+        function attachExpenseListeners() {
+            document.querySelectorAll('.expense-usd').forEach(inp => inp.addEventListener('input', updateNetPreview));
+        }
+
+        function getTotalExpensesUSD() {
+            let total = 0;
+            document.querySelectorAll('.expense-usd').forEach(inp => {
+                total += parseFloat(inp.value) || 0;
+            });
+            return total;
+        }
+
+        function updateNetPreview() {
+            const sales = parseFloat(document.getElementById('totalSales').value) || 0;
+            const rate = parseFloat(document.getElementById('dollarRate').value) || 0;
+            const totalExpUSD = getTotalExpensesUSD();
+            const fb = parseFloat(document.getElementById('fbExpense').value) || 0;
+            const net = sales - (totalExpUSD * rate) - fb;
+            document.getElementById('netPreview').innerText = formatNumber(net);
+        }
+
+        (function() {
+            document.getElementById('dateInput').value = new Date().toISOString().slice(0,10);
+            attachExpenseListeners();
+
+            ['totalSales', 'dollarRate', 'fbExpense'].forEach(id => 
+                document.getElementById(id).addEventListener('input', updateNetPreview));
+            updateNetPreview();
+
+            document.getElementById('dailyForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const date = document.getElementById('dateInput').value;
+                const sales = parseFloat(document.getElementById('totalSales').value) || 0;
+                const rate = parseFloat(document.getElementById('dollarRate').value) || 0;
+                const totalExpUSD = getTotalExpensesUSD();
+                const fb = parseFloat(document.getElementById('fbExpense').value) || 0;
+                const net = sales - (totalExpUSD * rate) - fb;
+
+                const newDaily = {
+                    id: Date.now() + '-' + Math.random().toString(36).substr(2,8),
+                    date,
+                    totalSalesDZD: sales,
+                    dollarRate: rate,
+                    totalServiceExpenseUSD: totalExpUSD,
+                    facebookExpenseDZD: fb,
+                    netProfitDZD: net,
+                    totalExpensesDZD: (totalExpUSD * rate) + fb
+                };
+                const all = getDaily();
+                all.push(newDaily);
+                saveDaily(all);
+                window.location.href = 'total.html';
+            });
+        })();
+    </script>
+</body>
+</html>

@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>NOVA ADS · التقارير</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: system-ui, sans-serif; }
+        body { background: #f0f4fa; padding: 16px; padding-bottom: 80px; }
+        .header { display: flex; align-items: center; gap: 12px; background: white; padding: 16px; border-radius: 30px; margin-bottom: 20px; }
+        .logo { width: 56px; height: 56px; background: #102a43; border-radius: 18px; overflow: hidden; }
+        .logo img { width: 100%; height: 100%; object-fit: cover; }
+        .title { font-size: 24px; font-weight: 700; color: #0b2a41; }
+        .sub { font-size: 14px; color: #5a7184; }
+
+        .section-title { font-size: 20px; font-weight: 700; margin: 20px 0 12px; }
+        .report-card {
+            background: white;
+            border-radius: 36px;
+            padding: 22px;
+            margin-bottom: 16px;
+        }
+        .month-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 0;
+            border-bottom: 1px solid #ecf1f7;
+        }
+        .month-name { font-weight: 600; }
+        .month-profit { font-weight: 800; color: #1e4a8b; }
+        .top-client {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 0;
+        }
+        .rank { background: #3b82f6; color: white; width: 40px; height: 40px; border-radius: 30px; display: flex; align-items: center; justify-content: center; font-weight: 800; }
+        .bottom-nav {
+            position: fixed; bottom: 0; left: 0; right: 0; background: white; display: flex; justify-content: space-around; padding: 12px 16px 20px; border-radius: 40px 40px 0 0; border-top: 1px solid #edf2f9;
+        }
+        .nav-item { display: flex; flex-direction: column; align-items: center; text-decoration: none; color: #7f8fa4; font-size: 12px; gap: 4px; }
+        .nav-item i { font-size: 24px; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo"><img src="img/logo.png" alt="NOVA"></div>
+        <div><div class="title">التقارير</div><div class="sub">تحليلات متقدمة</div></div>
+    </div>
+
+    <div class="section-title"><i class="fas fa-calendar-alt"></i> ملخص الأشهر</div>
+    <div id="monthlyReports" class="report-card"></div>
+
+    <div class="section-title"><i class="fas fa-trophy"></i> أفضل 5 عملاء</div>
+    <div id="topClients" class="report-card"></div>
+
+    <div class="bottom-nav">
+        <a href="dashboard.html" class="nav-item"><i class="fas fa-chart-pie"></i><span>الرئيسية</span></a>
+        <a href="index.html" class="nav-item"><i class="fas fa-user-plus"></i><span>إضافة</span></a>
+        <a href="vu.html" class="nav-item"><i class="fas fa-users"></i><span>العملاء</span></a>
+        <a href="ads.html" class="nav-item"><i class="fas fa-coins"></i><span>يومي</span></a>
+        <a href="total.html" class="nav-item"><i class="fas fa-calendar-alt"></i><span>ملخص</span></a>
+    </div>
+
+    <script>
+        const STORAGE_CLIENTS = 'nova_clients';
+        const STORAGE_DAILY = 'nova_daily';
+        function getClients() { return JSON.parse(localStorage.getItem(STORAGE_CLIENTS) || '[]'); }
+        function getDaily() { return JSON.parse(localStorage.getItem(STORAGE_DAILY) || '[]'); }
+
+        function formatNumber(value) {
+            if (value === null || value === undefined) return '0';
+            if (Number.isInteger(value)) return value.toString();
+            let num = value.toFixed(2);
+            return num.endsWith('.00') ? parseInt(value).toString() : num;
+        }
+
+        function loadReports() {
+            const daily = getDaily();
+            // تجميع حسب الشهر
+            const months = {};
+            daily.forEach(d => {
+                const month = d.date.slice(0,7); // YYYY-MM
+                if (!months[month]) months[month] = { sales:0, net:0, count:0 };
+                months[month].sales += d.totalSalesDZD || 0;
+                months[month].net += d.netProfitDZD || 0;
+                months[month].count++;
+            });
+
+            let monthlyHtml = '';
+            Object.keys(months).sort().reverse().forEach(m => {
+                const arabicMonth = m.replace('2025-','').replace('2026-',''); // تبسيط
+                monthlyHtml += `
+                <div class="month-row">
+                    <span class="month-name">${arabicMonth}</span>
+                    <span>${months[m].count} يوم</span>
+                    <span class="month-profit">${formatNumber(months[m].net)} دج</span>
+                </div>`;
+            });
+            if (!monthlyHtml) monthlyHtml = '<div class="month-row">لا توجد بيانات بعد</div>';
+            document.getElementById('monthlyReports').innerHTML = monthlyHtml;
+
+            // أفضل العملاء
+            const clients = getClients();
+            const clientMap = new Map();
+            clients.forEach(c => {
+                const name = c.pageName;
+                if (!clientMap.has(name)) clientMap.set(name, { name, total:0, count:0 });
+                const entry = clientMap.get(name);
+                entry.total += c.amountPaidDZD || 0;
+                entry.count++;
+            });
+
+            const top = Array.from(clientMap.values()).sort((a,b) => b.total - a.total).slice(0,5);
+            let topHtml = '';
+            top.forEach((c, idx) => {
+                topHtml += `
+                <div class="top-client">
+                    <div class="rank">${idx+1}</div>
+                    <div style="flex:1;"><strong>${c.name}</strong> <span style="color:#5a7184;">(${c.count} صفقة)</span></div>
+                    <div style="font-weight:700;">${formatNumber(c.total)} دج</div>
+                </div>`;
+            });
+            if (!topHtml) topHtml = '<div class="top-client">لا يوجد عملاء</div>';
+            document.getElementById('topClients').innerHTML = topHtml;
+        }
+
+        loadReports();
+    </script>
+</body>
+</html>

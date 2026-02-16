@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>NOVA ADS · الملخص اليومي</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: system-ui, sans-serif; }
+        body { background: #f0f4fa; padding: 16px; padding-bottom: 80px; }
+        .header { display: flex; align-items: center; gap: 12px; background: white; padding: 16px; border-radius: 30px; margin-bottom: 20px; }
+        .logo { width: 56px; height: 56px; background: #102a43; border-radius: 18px; overflow: hidden; }
+        .logo img { width: 100%; height: 100%; object-fit: cover; }
+        .title { font-size: 24px; font-weight: 700; color: #0b2a41; }
+        .sub { font-size: 14px; color: #5a7184; }
+
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .stat-card {
+            background: white;
+            border-radius: 30px;
+            padding: 18px 8px;
+            text-align: center;
+            box-shadow: 0 6px 14px rgba(0,0,0,0.02);
+        }
+        .stat-number { font-size: 22px; font-weight: 800; color: #102b47; }
+        .stat-label { font-size: 12px; color: #677e9c; }
+
+        .daily-grid { display: flex; flex-direction: column; gap: 16px; }
+        .daily-card {
+            background: white;
+            border-radius: 36px;
+            padding: 20px;
+            border-right: 10px solid #3b82f6;
+        }
+        .daily-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        .date-badge {
+            background: #eef3ff;
+            padding: 8px 20px;
+            border-radius: 40px;
+            font-weight: 600;
+        }
+        .delete-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: #b91c1c;
+            cursor: pointer;
+        }
+        .daily-detail {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin: 15px 0;
+        }
+        .chip {
+            background: #f5f9ff;
+            padding: 10px 18px;
+            border-radius: 40px;
+            font-size: 15px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .bottom-nav {
+            position: fixed; bottom: 0; left: 0; right: 0; background: white; display: flex;
+            justify-content: space-around; padding: 12px 16px 20px; border-radius: 40px 40px 0 0;
+            border-top: 1px solid #edf2f9;
+        }
+        .nav-item { display: flex; flex-direction: column; align-items: center; text-decoration: none; color: #7f8fa4; font-size: 12px; gap: 4px; }
+        .nav-item i { font-size: 24px; }
+        .nav-item.active { color: #1e4a8b; font-weight: 600; }
+        .empty-state { background: white; border-radius: 48px; padding: 60px 20px; text-align: center; color: #809ab3; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo"><img src="img/logo.png" alt="NOVA"></div>
+        <div><div class="title">ملخص الأيام</div><div class="sub">إحصائيات تراكمية</div></div>
+    </div>
+
+    <div class="stats-row">
+        <div class="stat-card"><span class="stat-number" id="totalSalesAll">0</span><div class="stat-label">إجمالي المبيعات</div></div>
+        <div class="stat-card"><span class="stat-number" id="totalExpensesAll">0</span><div class="stat-label">إجمالي المصاريف</div></div>
+        <div class="stat-card"><span class="stat-number" id="totalNetAll">0</span><div class="stat-label">صافي الأرباح</div></div>
+        <div class="stat-card"><span class="stat-number" id="daysCount">0</span><div class="stat-label">عدد الأيام</div></div>
+        <div class="stat-card"><span class="stat-number" id="avgDailySales">0</span><div class="stat-label">متوسط المبيعات</div></div>
+        <div class="stat-card"><span class="stat-number" id="avgDailyNet">0</span><div class="stat-label">متوسط الصافي</div></div>
+    </div>
+
+    <div id="dailyContainer" class="daily-grid"></div>
+
+    <div class="bottom-nav">
+        <a href="dashboard.html" class="nav-item"><i class="fas fa-chart-pie"></i><span>الرئيسية</span></a>
+        <a href="index.html" class="nav-item"><i class="fas fa-user-plus"></i><span>إضافة</span></a>
+        <a href="vu.html" class="nav-item"><i class="fas fa-users"></i><span>العملاء</span></a>
+        <a href="ads.html" class="nav-item"><i class="fas fa-coins"></i><span>يومي</span></a>
+        <a href="total.html" class="nav-item active"><i class="fas fa-calendar-alt"></i><span>ملخص</span></a>
+    </div>
+
+    <script>
+        const STORAGE_DAILY = 'nova_daily';
+        function getDaily() { return JSON.parse(localStorage.getItem(STORAGE_DAILY) || '[]'); }
+        function saveDaily(data) { localStorage.setItem(STORAGE_DAILY, JSON.stringify(data)); }
+
+        function formatNumber(value) {
+            if (value === null || value === undefined) return '0';
+            if (Number.isInteger(value)) return value.toString();
+            let num = value.toFixed(2);
+            return num.endsWith('.00') ? parseInt(value).toString() : num;
+        }
+
+        function renderDaily() {
+            const items = getDaily();
+            const totalSales = items.reduce((a,d) => a + (d.totalSalesDZD || 0), 0);
+            const totalExp = items.reduce((a,d) => a + (d.totalExpensesDZD || 0), 0);
+            const totalNet = items.reduce((a,d) => a + (d.netProfitDZD || 0), 0);
+            const days = items.length;
+            document.getElementById('totalSalesAll').innerText = formatNumber(totalSales);
+            document.getElementById('totalExpensesAll').innerText = formatNumber(totalExp);
+            document.getElementById('totalNetAll').innerText = formatNumber(totalNet);
+            document.getElementById('daysCount').innerText = days;
+            document.getElementById('avgDailySales').innerText = formatNumber(days ? totalSales / days : 0);
+            document.getElementById('avgDailyNet').innerText = formatNumber(days ? totalNet / days : 0);
+
+            const container = document.getElementById('dailyContainer');
+            if (items.length === 0) {
+                container.innerHTML = `<div class="empty-state"><i class="far fa-calendar-times fa-2x"></i><p>لا توجد أيام مسجلة</p></div>`;
+                return;
+            }
+            items.sort((a,b) => (a.date < b.date ? 1 : -1));
+            let html = '';
+            items.forEach(d => {
+                html += `
+                <div class="daily-card" data-id="${d.id}">
+                    <div class="daily-header">
+                        <span class="date-badge"><i class="far fa-calendar"></i> ${d.date}</span>
+                        <button class="delete-btn" onclick="deleteDaily('${d.id}')"><i class="fas fa-trash-alt"></i></button>
+                    </div>
+                    <div class="daily-detail">
+                        <span class="chip"><i class="fas fa-money-bill-wave"></i> مبيعات: ${formatNumber(d.totalSalesDZD)} دج</span>
+                        <span class="chip"><i class="fas fa-coins"></i> صافي: ${formatNumber(d.netProfitDZD)} دج</span>
+                        <span class="chip"><i class="fas fa-dollar-sign"></i> السعر: ${formatNumber(d.dollarRate)}</span>
+                        <span class="chip"><i class="fas fa-receipt"></i> مصاريف $: ${formatNumber(d.totalServiceExpenseUSD)}</span>
+                        <span class="chip"><i class="fab fa-facebook"></i> فيسبوك: ${formatNumber(d.facebookExpenseDZD)} دج</span>
+                        <span class="chip"><i class="fas fa-calculator"></i> إجمالي المصاريف: ${formatNumber(d.totalExpensesDZD)} دج</span>
+                    </div>
+                </div>`;
+            });
+            container.innerHTML = html;
+        }
+
+        window.deleteDaily = function(id) {
+            if (!confirm('حذف هذا اليوم؟')) return;
+            let items = getDaily();
+            items = items.filter(d => d.id !== id);
+            saveDaily(items);
+            renderDaily();
+        };
+        renderDaily();
+    </script>
+</body>
+</html>

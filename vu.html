@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>NOVA ADS · العملاء</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        body {
+            background: #f5f7fb;
+            padding: 16px 14px 90px;
+            min-height: 100vh;
+        }
+
+        /* الهيدر */
+        .header {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            background: #ffffff;
+            padding: 14px 20px;
+            border-radius: 34px;
+            margin-bottom: 24px;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.02);
+            border: 1px solid #edf2f9;
+        }
+
+        .logo {
+            width: 52px;
+            height: 52px;
+            background: #0a1c2f;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            box-shadow: 0 6px 12px rgba(10,28,47,0.1);
+        }
+
+        .logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .title-section {
+            flex: 1;
+        }
+
+        .title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #0a1c2f;
+            line-height: 1.2;
+        }
+
+        .sub {
+            font-size: 14px;
+            color: #687e9f;
+            margin-top: 4px;
+        }
+
+        /* ===== بطاقة الإحصائيات الموحدة ===== */
+        .stats-card {
+            background: #ffffff;
+            border-radius: 40px;
+            padding: 22px 18px;
+            margin-bottom: 28px;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.04);
+            border: 1px solid #eef3fb;
+        }
+
+        .stats-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .stats-row:first-child {
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 2px dashed #dde5f0;
+        }
+
+        .stat-block {
+            flex: 1;
+            min-width: 80px;
+            text-align: center;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #5d7395;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            white-space: nowrap;
+        }
+
+        .stat-label i {
+            font-size: 14px;
+            color: #2f5a9c;
+        }
+
+        .stat-value {
+            font-size: 20px;
+            font-weight: 800;
+            color: #0a1c2f;
+            line-height: 1.3;
+            word-break: break-word;
+        }
+
+        .stat-value small {
+            font-size: 13px;
+            font-weight: 500;
+            color: #4b6a92;
+            margin-right: 2px;
+        }
+
+        /* شبكة الإحصائيات السفلية (عدد العملاء، مدفوع، الخ) */
+        .stats-grid-4 {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-top: 8px;
+        }
+
+        .stat-item {
+            text-align: center;
+            background: #f8fcff;
+            padding: 12px 4px;
+            border-radius: 28px;
+        }
+
+        .stat-item .stat-label {
+            font-size: 11px;
+            margin-bottom: 4px;
+        }
+
+        .stat-item .stat-value {
+            font-size: 18px;
+        }
+
+        /* شريط البحث */
+        .search-container {
+            background: white;
+            border-radius: 50px;
+            padding: 6px 20px;
+            display: flex;
+            align-items: center;
+            margin-bottom: 24px;
+            border: 1px solid #e2eaf4;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+        }
+
+        .search-container i {
+            font-size: 20px;
+            color: #8b9bb5;
+            margin-left: 12px;
+        }
+
+        .search-container input {
+            flex: 1;
+            border: none;
+            padding: 16px 0;
+            font-size: 16px;
+            background: transparent;
+            outline: none;
+        }
+
+        .search-container input::placeholder {
+            color: #a6b7d0;
+        }
+
+        /* بطاقة العميل */
+        .clients-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .client-card {
+            background: #ffffff;
+            border-radius: 40px;
+            padding: 20px 18px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.02);
+            border: 1px solid #eef3fb;
+        }
+
+        /* رأس البطاقة */
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .track-badge {
+            background: #ecf2ff;
+            color: #1e4a8b;
+            padding: 8px 18px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .payment-status {
+            padding: 6px 16px;
+            border-radius: 40px;
+            font-size: 13px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .payment-status.paid {
+            background: #e3f6ec;
+            color: #0b703b;
+        }
+
+        .payment-status.unpaid {
+            background: #fee9e9;
+            color: #b13e3e;
+        }
+
+        /* معلومات الصفحة */
+        .page-info {
+            margin-bottom: 18px;
+        }
+
+        .page-name {
+            font-size: 20px;
+            font-weight: 700;
+            color: #0a1c2f;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 8px;
+        }
+
+        .contact-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .phone-link, .page-link {
+            background: #f0f6ff;
+            padding: 8px 18px;
+            border-radius: 40px;
+            color: #1e4a8b;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* شبكة البيانات المالية */
+        .finance-grid {
+            background: #f8fcff;
+            border-radius: 32px;
+            padding: 18px 12px;
+            margin: 16px 0;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px 8px;
+        }
+
+        .finance-item {
+            text-align: center;
+        }
+
+        .finance-label {
+            font-size: 11px;
+            color: #5d7395;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            margin-bottom: 4px;
+        }
+
+        .finance-value {
+            font-weight: 700;
+            font-size: 15px;
+            color: #0a1c2f;
+            background: white;
+            padding: 6px 8px;
+            border-radius: 30px;
+            display: inline-block;
+            min-width: 70px;
+            border: 1px solid #dee9f5;
+        }
+
+        /* ملاحظات */
+        .notes-box {
+            background: #fff8e7;
+            padding: 14px 18px;
+            border-radius: 40px;
+            font-size: 14px;
+            color: #785b2c;
+            margin: 16px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* صافي الربح */
+        .net-row {
+            background: linear-gradient(135deg, #dae8ff, #c9dcff);
+            border-radius: 60px;
+            padding: 16px 22px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 18px 0 16px;
+            border: 1px solid #b2ccff;
+        }
+
+        .net-label {
+            font-weight: 700;
+            color: #10356b;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 16px;
+        }
+
+        .net-value {
+            font-weight: 800;
+            font-size: 26px;
+            color: #0f2b63;
+            letter-spacing: -0.5px;
+        }
+
+        /* أزرار الإجراءات */
+        .action-row {
+            display: flex;
+            gap: 12px;
+            margin-top: 10px;
+        }
+
+        .action-btn {
+            flex: 1;
+            background: #f1f6fd;
+            border: none;
+            padding: 16px 0;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            color: #1f3e6b;
+            cursor: pointer;
+            transition: 0.2s;
+            border: 1px solid #dee9f5;
+        }
+
+        .action-btn.delete {
+            background: #ffebeb;
+            color: #b13e3e;
+            border-color: #ffd7d7;
+        }
+
+        .action-btn:active {
+            transform: scale(0.97);
+        }
+
+        /* الشريط السفلي */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #ffffff;
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 16px 22px;
+            border-radius: 40px 40px 0 0;
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.04);
+            border-top: 1px solid #edf2f9;
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: #8f9fb9;
+            font-size: 11px;
+            gap: 4px;
+            transition: 0.2s;
+        }
+
+        .nav-item i {
+            font-size: 24px;
+        }
+
+        .nav-item.active {
+            color: #1e4a8b;
+            font-weight: 600;
+        }
+
+        .empty-state {
+            background: white;
+            border-radius: 48px;
+            padding: 60px 20px;
+            text-align: center;
+            color: #8f9fb9;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">
+            <img src="img/logo.png" alt="NOVA ADS" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 fill=%22%230a1c2f%22/><text x=%2220%22 y=%2268%22 fill=%22%23fff%22 font-size=%2260%22>N</text></svg>'">
+        </div>
+        <div class="title-section">
+            <div class="title">العملاء</div>
+            <div class="sub">جميع الصفقات المسجلة</div>
+        </div>
+    </div>
+
+    <!-- بطاقة الإحصائيات الموحدة -->
+    <div class="stats-card" id="statsCard">
+        <div class="stats-row" id="mainStats">
+            <!-- سيتم تعبئتها بالجافاسكريبت -->
+        </div>
+        <div class="stats-grid-4" id="secondaryStats">
+            <!-- سيتم تعبئتها بالجافاسكريبت -->
+        </div>
+    </div>
+
+    <!-- بحث -->
+    <div class="search-container">
+        <i class="fas fa-search"></i>
+        <input type="text" id="searchInput" placeholder="ابحث برقم التتبع أو اسم الصفحة..." autocomplete="off">
+    </div>
+
+    <!-- قائمة العملاء -->
+    <div id="clientsContainer" class="clients-grid"></div>
+
+    <!-- الشريط السفلي -->
+    <div class="bottom-nav">
+        <a href="dashboard.html" class="nav-item"><i class="fas fa-chart-pie"></i><span>الرئيسية</span></a>
+        <a href="index.html" class="nav-item"><i class="fas fa-user-plus"></i><span>إضافة</span></a>
+        <a href="vu.html" class="nav-item active"><i class="fas fa-users"></i><span>العملاء</span></a>
+        <a href="ads.html" class="nav-item"><i class="fas fa-coins"></i><span>يومي</span></a>
+        <a href="total.html" class="nav-item"><i class="fas fa-calendar-alt"></i><span>ملخص</span></a>
+    </div>
+
+    <script>
+        const STORAGE_CLIENTS = 'nova_clients';
+
+        function getClients() {
+            return JSON.parse(localStorage.getItem(STORAGE_CLIENTS) || '[]');
+        }
+        function saveClients(clients) {
+            localStorage.setItem(STORAGE_CLIENTS, JSON.stringify(clients));
+        }
+
+        // دالة لتنسيق الأرقام مع فواصل الآلاف ورمز دج (بدون كسور إذا كان الرقم صحيحاً)
+        function formatMoney(value) {
+            if (value === null || value === undefined) return '0 دج';
+            // تقريب لأقرب عدد صحيح إذا كان الكسر بسيطاً
+            let num = Math.round(value * 100) / 100;
+            if (Math.abs(num - Math.round(num)) < 0.01) {
+                num = Math.round(num);
+            }
+            // تنسيق مع فواصل الآلاف
+            const formatted = num.toLocaleString('ar-DZ', { maximumFractionDigits: 2 });
+            return formatted + ' دج';
+        }
+
+        function formatNumber(value) {
+            if (value === null || value === undefined) return '0';
+            let num = Math.round(value * 100) / 100;
+            if (Math.abs(num - Math.round(num)) < 0.01) {
+                num = Math.round(num);
+            }
+            return num.toLocaleString('ar-DZ', { maximumFractionDigits: 2 });
+        }
+
+        let currentFilter = '';
+
+        function updateStats(clients) {
+            const totalSales = clients.reduce((a, c) => a + (c.amountPaidDZD || 0), 0);
+            const totalExp = clients.reduce((a, c) => a + ((c.serviceExpenseUSD || 0) * (c.dollarRate || 0)), 0);
+            const totalNet = clients.reduce((a, c) => a + (c.netProfitDZD || 0), 0);
+            const paid = clients.filter(c => c.paid).length;
+            const unpaid = clients.length - paid;
+            const avg = clients.length ? totalSales / clients.length : 0;
+
+            // الصف الرئيسي
+            document.getElementById('mainStats').innerHTML = `
+                <div class="stat-block">
+                    <div class="stat-label"><i class="fas fa-money-bill-wave"></i> إجمالي المبيعات</div>
+                    <div class="stat-value">${formatMoney(totalSales)}</div>
+                </div>
+                <div class="stat-block">
+                    <div class="stat-label"><i class="fas fa-receipt"></i> إجمالي المصاريف</div>
+                    <div class="stat-value">${formatMoney(totalExp)}</div>
+                </div>
+                <div class="stat-block">
+                    <div class="stat-label"><i class="fas fa-chart-line"></i> صافي الربح</div>
+                    <div class="stat-value">${formatMoney(totalNet)}</div>
+                </div>
+            `;
+
+            // الشبكة الثانوية (4 عناصر)
+            document.getElementById('secondaryStats').innerHTML = `
+                <div class="stat-item">
+                    <div class="stat-label"><i class="fas fa-users"></i> العملاء</div>
+                    <div class="stat-value">${clients.length}</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label"><i class="fas fa-check-circle"></i> مدفوع</div>
+                    <div class="stat-value">${paid}</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label"><i class="fas fa-hourglass-half"></i> غير مدفوع</div>
+                    <div class="stat-value">${unpaid}</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label"><i class="fas fa-chart-bar"></i> المتوسط</div>
+                    <div class="stat-value">${formatMoney(avg)}</div>
+                </div>
+            `;
+        }
+
+        function renderClients() {
+            let clients = getClients();
+            clients.sort((a, b) => (a.date < b.date ? 1 : -1));
+
+            const filter = currentFilter.trim().toLowerCase();
+            const filtered = filter ? clients.filter(c => 
+                (c.trackingNumber && c.trackingNumber.toLowerCase().includes(filter)) ||
+                (c.pageName && c.pageName.toLowerCase().includes(filter))
+            ) : clients;
+
+            updateStats(filtered);
+
+            const container = document.getElementById('clientsContainer');
+            if (filtered.length === 0) {
+                container.innerHTML = `<div class="empty-state"><i class="fas fa-user-slash fa-3x"></i><p>${filter ? 'لا يوجد تطابق' : 'لا يوجد عملاء بعد'}</p></div>`;
+                return;
+            }
+
+            let html = '';
+            filtered.forEach(c => {
+                const paidClass = c.paid ? 'paid' : 'unpaid';
+                const paidIcon = c.paid ? 'fa-check-circle' : 'fa-hourglass-half';
+                const paidText = c.paid ? 'مدفوع' : 'غير مدفوع';
+
+                // تنسيق الأرقام
+                const salesFormatted = formatMoney(c.amountPaidDZD);
+                const expenseFormatted = `$ ${formatNumber(c.serviceExpenseUSD)}`;
+                const rateFormatted = formatMoney(c.dollarRate);
+                const netFormatted = formatMoney(c.netProfitDZD);
+                const followersFormatted = formatNumber(c.followers);
+
+                html += `
+                <div class="client-card" data-id="${c.id}">
+                    <div class="card-header">
+                        <span class="track-badge"><i class="fas fa-hashtag"></i> ${c.trackingNumber || 'بدون'}</span>
+                        <span class="payment-status ${paidClass}"><i class="fas ${paidIcon}"></i> ${paidText}</span>
+                    </div>
+
+                    <div class="page-info">
+                        <div class="page-name">
+                            <i class="fas fa-heading"></i> ${c.pageName || '——'}
+                        </div>
+                        <div class="contact-row">
+                            ${c.phone ? `<a href="tel:${c.phone}" class="phone-link"><i class="fas fa-phone-alt"></i> اتصال</a>` : ''}
+                            ${c.pageLink ? `<a href="${c.pageLink}" target="_blank" class="page-link"><i class="fas fa-link"></i> الرابط</a>` : ''}
+                        </div>
+                    </div>
+
+                    <div class="finance-grid">
+                        <div class="finance-item">
+                            <span class="finance-label"><i class="far fa-calendar"></i> التاريخ</span>
+                            <span class="finance-value">${c.date}</span>
+                        </div>
+                        <div class="finance-item">
+                            <span class="finance-label"><i class="fas fa-users"></i> متابعين</span>
+                            <span class="finance-value">${followersFormatted}</span>
+                        </div>
+                        <div class="finance-item">
+                            <span class="finance-label"><i class="fas fa-dollar-sign"></i> السعر</span>
+                            <span class="finance-value">${rateFormatted}</span>
+                        </div>
+                        <div class="finance-item">
+                            <span class="finance-label"><i class="fas fa-money-bill-wave"></i> المبيعات</span>
+                            <span class="finance-value">${salesFormatted}</span>
+                        </div>
+                        <div class="finance-item">
+                            <span class="finance-label"><i class="fas fa-receipt"></i> المصاريف</span>
+                            <span class="finance-value">${expenseFormatted}</span>
+                        </div>
+                        <div class="finance-item">
+                            <span class="finance-label"><i class="fas fa-calculator"></i> الصافي</span>
+                            <span class="finance-value">${netFormatted}</span>
+                        </div>
+                    </div>
+
+                    ${c.notes ? `
+                    <div class="notes-box">
+                        <i class="fas fa-sticky-note"></i> ${c.notes}
+                    </div>` : ''}
+
+                    <div class="net-row">
+                        <span class="net-label"><i class="fas fa-coins"></i> صافي الربح</span>
+                        <span class="net-value">${netFormatted}</span>
+                    </div>
+
+                    <div class="action-row">
+                        <button class="action-btn" onclick="showInvoice('${c.id}')"><i class="fas fa-file-invoice"></i> فاتورة</button>
+                        <button class="action-btn delete" onclick="deleteClient('${c.id}')"><i class="fas fa-trash-alt"></i> حذف</button>
+                    </div>
+                </div>`;
+            });
+            container.innerHTML = html;
+        }
+
+        window.deleteClient = function(id) {
+            if (!confirm('هل أنت متأكد من حذف هذا العميل؟')) return;
+            let clients = getClients();
+            clients = clients.filter(c => c.id !== id);
+            saveClients(clients);
+            renderClients();
+        };
+
+        window.showInvoice = function(id) {
+            sessionStorage.setItem('invoiceClientId', id);
+            window.location.href = 'invoice.html';
+        };
+
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            currentFilter = e.target.value;
+            renderClients();
+        });
+
+        renderClients();
+    </script>
+</body>
+</html>

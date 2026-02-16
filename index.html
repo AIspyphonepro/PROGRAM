@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>NOVA ADS · إضافة عميل</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+        }
+        body {
+            background: #f0f4fa;
+            padding: 16px;
+            padding-bottom: 80px;
+        }
+        .header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: white;
+            padding: 16px;
+            border-radius: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 18px rgba(0,0,0,0.02);
+        }
+        .logo {
+            width: 56px;
+            height: 56px;
+            background: #102a43;
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            box-shadow: 0 6px 12px rgba(0,20,50,0.1);
+        }
+        .logo img { width: 100%; height: 100%; object-fit: cover; }
+        .title { font-size: 24px; font-weight: 700; color: #0b2a41; }
+        .sub { font-size: 14px; color: #5a7184; margin-top: 4px; }
+        .card {
+            background: white;
+            border-radius: 36px;
+            padding: 26px 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 12px 24px rgba(0,0,0,0.02);
+        }
+        .form-group { margin-bottom: 22px; }
+        label {
+            display: block;
+            font-size: 15px;
+            font-weight: 600;
+            color: #1f3a5f;
+            margin-bottom: 8px;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 18px 22px;
+            border: 2px solid #e6ecf5;
+            border-radius: 40px;
+            font-size: 16px;
+            background: #fbfdff;
+            transition: 0.15s;
+        }
+        input:focus, textarea:focus {
+            border-color: #3b82f6;
+            outline: none;
+            background: white;
+        }
+        textarea { border-radius: 30px; resize: vertical; }
+        .checkbox-wrapper {
+            background: #f0f7ff;
+            padding: 16px 22px;
+            border-radius: 40px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .checkbox-wrapper input[type="checkbox"] {
+            width: 26px;
+            height: 26px;
+            accent-color: #3b82f6;
+        }
+        .row { display: flex; gap: 12px; }
+        .row .form-group { flex: 1; }
+        .net-profit-box {
+            background: linear-gradient(145deg, #d9eaff, #c3dafe);
+            border-radius: 40px;
+            padding: 22px;
+            text-align: center;
+            margin: 28px 0 12px;
+        }
+        .net-profit-box .label {
+            font-size: 16px;
+            color: #1e3a8a;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .net-profit-box .value {
+            font-size: 40px;
+            font-weight: 800;
+            color: #0f2b63;
+        }
+        .btn-primary {
+            background: #0f2b46;
+            color: white;
+            border: none;
+            width: 100%;
+            padding: 22px;
+            border-radius: 60px;
+            font-size: 20px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            cursor: pointer;
+            box-shadow: 0 12px 24px rgba(15,35,70,0.2);
+            transition: 0.2s;
+        }
+        .btn-primary:active { transform: scale(0.97); background: #1e3a5f; }
+        /* الشريط السفلي */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            display: flex;
+            justify-content: space-around;
+            padding: 12px 16px 20px;
+            border-radius: 40px 40px 0 0;
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.04);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid #edf2f9;
+        }
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: #7f8fa4;
+            font-size: 12px;
+            gap: 4px;
+            transition: 0.2s;
+        }
+        .nav-item i { font-size: 24px; }
+        .nav-item.active {
+            color: #1e4a8b;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo"><img src="img/logo.png" alt="NOVA" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 fill=%22%231e2b3c%22/><text x=%2220%22 y=%2268%22 fill=%22%23fff%22 font-size=%2260%22>N</text></svg>'"></div>
+        <div><div class="title">إضافة عميل</div><div class="sub">سجل صفقة جديدة</div></div>
+    </div>
+
+    <div class="card">
+        <form id="clientForm">
+            <div class="form-group">
+                <label><i class="far fa-calendar-alt"></i> تاريخ اليوم</label>
+                <input type="date" id="dateInput" required>
+            </div>
+            <div class="row">
+                <div class="form-group">
+                    <label><i class="fas fa-hashtag"></i> رقم تتبع</label>
+                    <input type="text" id="trackingNumber" placeholder="مثال: TR-2415" required>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-users"></i> عدد المتابعين</label>
+                    <input type="number" id="followers" min="0" placeholder="0">
+                </div>
+            </div>
+            <div class="form-group">
+                <label><i class="fas fa-heading"></i> اسم الصفحة</label>
+                <input type="text" id="pageName" placeholder="اسم الصفحة أو الحساب" required>
+            </div>
+            <div class="form-group">
+                <label><i class="fas fa-link"></i> رابط الصفحة</label>
+                <input type="url" id="pageLink" placeholder="https://...">
+            </div>
+            <div class="form-group">
+                <label><i class="fas fa-phone-alt"></i> رقم الهاتف (اختياري)</label>
+                <input type="tel" id="phone" placeholder="05XX XX XX XX">
+            </div>
+            <div class="form-group">
+                <label><i class="fas fa-sticky-note"></i> ملاحظات</label>
+                <textarea id="notes" rows="2" placeholder="أي تفاصيل إضافية..."></textarea>
+            </div>
+            <div class="checkbox-wrapper">
+                <label for="paidCheck" style="flex:1; margin:0;"><i class="fas fa-check-circle"></i> تم الدفع؟</label>
+                <input type="checkbox" id="paidCheck">
+            </div>
+            <div class="row">
+                <div class="form-group">
+                    <label><i class="fas fa-money-bill-wave"></i> المبيعات (دج)</label>
+                    <input type="number" id="amountPaid" step="0.01" min="0" value="0" required>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-dollar-sign"></i> سعر الدولار</label>
+                    <input type="number" id="dollarRate" step="0.1" min="0" value="260" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label><i class="fas fa-receipt"></i> مصاريف الخدمة ($)</label>
+                <input type="number" id="serviceExpense" step="0.01" min="0" value="0" required>
+            </div>
+
+            <div class="net-profit-box" id="netProfitDisplay">
+                <div class="label"><i class="fas fa-chart-line"></i> صافي الربح (دج)</div>
+                <div class="value" id="netValue">0</div>
+            </div>
+
+            <button type="submit" class="btn-primary"><i class="fas fa-plus-circle"></i> إضافة العميل</button>
+        </form>
+    </div>
+
+    <!-- الشريط السفلي -->
+    <div class="bottom-nav">
+        <a href="dashboard.html" class="nav-item"><i class="fas fa-chart-pie"></i><span>الرئيسية</span></a>
+        <a href="index.html" class="nav-item active"><i class="fas fa-user-plus"></i><span>إضافة</span></a>
+        <a href="vu.html" class="nav-item"><i class="fas fa-users"></i><span>العملاء</span></a>
+        <a href="ads.html" class="nav-item"><i class="fas fa-coins"></i><span>يومي</span></a>
+        <a href="total.html" class="nav-item"><i class="fas fa-calendar-alt"></i><span>ملخص</span></a>
+    </div>
+
+    <script>
+        const STORAGE_CLIENTS = 'nova_clients';
+        function getClients() { return JSON.parse(localStorage.getItem(STORAGE_CLIENTS) || '[]'); }
+        function saveClients(clients) { localStorage.setItem(STORAGE_CLIENTS, JSON.stringify(clients)); }
+
+        // دالة تنسيق بدون فواصل عشرية
+        function formatNumber(value) {
+            if (value === null || value === undefined) return '0';
+            if (Number.isInteger(value)) return value.toString();
+            let num = value.toFixed(2);
+            if (num.endsWith('.00')) return parseInt(value).toString();
+            return num; // نادراً ما يحدث لكن نحافظ على الكسور
+        }
+
+        (function() {
+            document.getElementById('dateInput').value = new Date().toISOString().slice(0,10);
+            document.getElementById('trackingNumber').value = 'TR-' + Math.floor(1000 + Math.random()*9000);
+
+            const amountInp = document.getElementById('amountPaid');
+            const rateInp = document.getElementById('dollarRate');
+            const expenseInp = document.getElementById('serviceExpense');
+            const netSpan = document.getElementById('netValue');
+
+            function updateNet() {
+                const amount = parseFloat(amountInp.value) || 0;
+                const rate = parseFloat(rateInp.value) || 0;
+                const expense = parseFloat(expenseInp.value) || 0;
+                netSpan.innerText = formatNumber(amount - (expense * rate));
+            }
+            [amountInp, rateInp, expenseInp].forEach(el => el.addEventListener('input', updateNet));
+            updateNet();
+
+            document.getElementById('clientForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const date = document.getElementById('dateInput').value;
+                const tracking = document.getElementById('trackingNumber').value.trim();
+                const pageName = document.getElementById('pageName').value.trim();
+                const pageLink = document.getElementById('pageLink').value.trim();
+                const phone = document.getElementById('phone').value.trim();
+                const notes = document.getElementById('notes').value.trim();
+                const paid = document.getElementById('paidCheck').checked;
+                const followers = parseInt(document.getElementById('followers').value) || 0;
+                const amountPaid = parseFloat(document.getElementById('amountPaid').value) || 0;
+                const dollarRate = parseFloat(document.getElementById('dollarRate').value) || 0;
+                const serviceExpense = parseFloat(document.getElementById('serviceExpense').value) || 0;
+                const netProfit = amountPaid - (serviceExpense * dollarRate);
+
+                if (!tracking || !pageName) return alert('رقم التتبع واسم الصفحة مطلوبان');
+
+                const newClient = {
+                    id: Date.now() + '-' + Math.random().toString(36).substr(2,6),
+                    date, trackingNumber: tracking, pageName, pageLink, phone, notes,
+                    paid, followers, amountPaidDZD: amountPaid, dollarRate,
+                    serviceExpenseUSD: serviceExpense, netProfitDZD: netProfit
+                };
+                const clients = getClients();
+                clients.push(newClient);
+                saveClients(clients);
+                window.location.href = 'vu.html';
+            });
+        })();
+    </script>
+</body>
+</html>
